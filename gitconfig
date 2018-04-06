@@ -1,0 +1,33 @@
+[user]
+        name = Jeremy D. Frens
+        email = jdfrens@gmail.com
+        useConfigOnly = true
+[color]
+        status = auto
+        branch = auto
+[github]
+        user = jdfrens
+[alias]
+        co = checkout
+        st = status
+        changes=diff --name-status -r
+        lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
+        create-pull-request = !sh -c 'stash pull-request $0 $@'
+[core]
+        # search for core.pager in
+        # <http://www.kernel.org/pub/software/scm/git/docs/git-config.html>
+        # to see why we use this convoluted syntax
+        #pager = less -$LESS -SFRX -SR +'/^---'
+        excludesfile = /Users/jeremy.frens/.gitignore_global
+[credential]
+        helper = osxkeychain
+[difftool "sourcetree"]
+        cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+        path =
+[mergetool "sourcetree"]
+        cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+        trustExitCode = true
+[push]
+        default = upstream
+[fetch]
+        prune = true

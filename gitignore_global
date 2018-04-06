@@ -1,0 +1,12 @@
+.DS_Store
+.DS_Store?
+*~
+configs/*-overrides.rb
+.autoenv.zsh
+.idea
+*.iml
+.elixir_ls
+.vscode
+.mertrc
+components/**/.ruby-version
+gems/**/.ruby-version
