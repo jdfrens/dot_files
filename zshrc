@@ -31,6 +31,7 @@ antigen bundle docker
 antigen bundle git
 antigen bundle gem
 antigen bundle osx
+antigen bundle kiurchv/asdf.plugin.zsh
 antigen bundle Tarrasch/zsh-autoenv
 
 antigen bundle zsh-users/zsh-syntax-highlighting
@@ -40,7 +41,7 @@ POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 POWERLEVEL9K_SHORTEN_DELIMITER=""
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(vcs newline dir rbenv)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(vcs newline dir)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs load command_execution_time)
 
 antigen theme bhilburn/powerlevel9k
@@ -57,10 +58,14 @@ export EDITOR="emacsclient -t"
 
 export PATH="/usr/local/opt/qt@5.5/bin:$PATH"
 
-if which nodenv > /dev/null; then eval "$(nodenv init -)"; fi
-eval "$(rbenv init - zsh)"
-eval "$(exenv init - zsh)"
+# if which nodenv > /dev/null; then eval "$(nodenv init -)"; fi
+# eval "$(rbenv init - zsh)"
+# eval "$(exenv init - zsh)"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export PATH="$HOME/.yarn/bin:$PATH:$HOME/bin"
+
+. $HOME/.asdf/asdf.sh
+
+. $HOME/.asdf/completions/asdf.bash
