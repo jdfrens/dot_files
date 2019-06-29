@@ -10,3 +10,4 @@ configs/*-overrides.rb
 .mertrc
 components/**/.ruby-version
 gems/**/.ruby-version
+tmp
