@@ -4,6 +4,7 @@
 configs/*-overrides.rb
 .autoenv.zsh
 .idea
+.iex.exs
 *.iml
 .elixir_ls
 .vscode
@@ -11,3 +12,4 @@ configs/*-overrides.rb
 components/**/.ruby-version
 gems/**/.ruby-version
 tmp
+.envrc

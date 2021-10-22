@@ -33,7 +33,7 @@ antigen bundle gem
 antigen bundle osx
 antigen bundle zsh-users/zsh-autosuggestions
 # antigen bundle kiurchv/asdf.plugin.zsh
-antigen bundle Tarrasch/zsh-autoenv
+# antigen bundle Tarrasch/zsh-autoenv
 antigen bundle zsh-users/zsh-syntax-highlighting
 
 POWERLEVEL9K_COLOR_SCHEME="light"
@@ -60,8 +60,8 @@ export ERL_AFLAGS="-kernel shell_history enabled"
 # export RUBYOPT="-W0"
 export EDITOR="emacsclient -t"
 # export EDITOR=emacs
+# export RUBYOPT="-W0"
 
-export PATH="/usr/local/opt/qt@5.5/bin:$PATH"
 
 # if which nodenv > /dev/null; then eval "$(nodenv init -)"; fi
 # eval "$(rbenv init - zsh)"
