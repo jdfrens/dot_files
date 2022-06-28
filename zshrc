@@ -30,7 +30,7 @@ antigen bundle command-not-found
 antigen bundle docker
 antigen bundle git
 antigen bundle gem
-antigen bundle osx
+antigen bundle macos
 antigen bundle zsh-users/zsh-autosuggestions
 # antigen bundle kiurchv/asdf.plugin.zsh
 # antigen bundle Tarrasch/zsh-autoenv
@@ -54,14 +54,19 @@ alias ec="emacsclient -c"
 alias et="emacsclient -t"
 alias fuck='eval $(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
 alias kraken='open -na "GitKraken" --args -p $(pwd)'
-alias k8s='docker login quay.io && docker pull quay.io/citybaseinc/toolkit:latest && docker run -it -p 8001:8001 -v ~/.aws:/root/.aws -v $PWD:/root/current -v ~/.ssh:/root/.ssh quay.io/citybaseinc/toolkit:latest'
 
 export ERL_AFLAGS="-kernel shell_history enabled"
-# export RUBYOPT="-W0"
 export EDITOR="emacsclient -t"
 # export EDITOR=emacs
 # export RUBYOPT="-W0"
 
+export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
+
+# CityBase stuff
+export DOCKER_MIX_ENV=prod
+
+# iTerm stuff
+export DISABLE_AUTO_TITLE="true"
 
 # if which nodenv > /dev/null; then eval "$(nodenv init -)"; fi
 # eval "$(rbenv init - zsh)"
@@ -72,5 +77,5 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 export PATH="$HOME/.yarn/bin:$PATH:$HOME/bin"
 
 source /usr/local/opt/asdf/asdf.sh
-# . $HOME/.asdf/asdf.sh
-# . $HOME/.asdf/completions/asdf.bash
+
+eval "$(direnv hook zsh)"
