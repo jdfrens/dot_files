@@ -1,0 +1,193 @@
+#!/usr/bin/env ruby
+
+# Generates a very opinionated `tasks.json` for Elixir projects.
+#
+# Usage (from the root of your project)
+#
+#   mkdir .vscode
+#   cp .vscode/tasks.json .vscode/tasks.backup.json
+#   task-maker > .vscode/tasks.json
+#
+# Creates build tasks:
+#   Deps.get
+#   Compile (MIX_ENV=test)
+#   Clean
+#   Clobber
+#   Dialyzer (MIX_ENV=test)
+#   Credo (MIX_ENV=test)
+#
+# Creates test tasks:
+#   All unit tests    -- runs `mix test` in root
+#   ExCoveralls       -- runs `mix coveralls.html --umbrella`
+#   Everything        -- runs `mix all_tests`
+#   component-app-1 tests
+#   component-app-2 tests
+#   ...
+#   component-app-n tests
+#
+# The component-app-i tests run the tests in the component directories (e.g., apps/component-app-i)
+#
+
+require 'json'
+
+class ComponentApp
+  def self.list
+    Dir.glob('apps/*').map do |dir|
+      ComponentApp.new(dir)
+    end
+  end
+
+  def initialize(dir)
+    @dir = dir
+  end
+
+  def directory
+    @dir
+  end
+
+  def name
+    @dir.gsub('apps/', '')
+  end
+end
+
+class TaskJSON
+  def self.generate
+    new.generate
+  end
+
+  def generate
+    puts JSON.generate(json, indent: '  ', space: ' ', object_nl: "\n", array_nl: "\n")
+  end
+
+  def json
+    {
+      "version": '2.0.0',
+      "tasks": tasks
+    }
+  end
+
+  def tasks
+    umbrella_tasks +
+      component_app_tasks +
+      build_tasks
+  end
+
+  def build_tasks
+    pm = ['$mixCompileError', '$mixCompileWarning']
+    [
+      mix_task(
+        label: 'Deps.get',
+        args: 'deps.get',
+        group: 'build'),
+      mix_task(
+        label: 'Docs',
+        args: 'docs',
+        group: 'build'),
+      mix_task(
+        label: 'Compile',
+        args: ['compile',  '--force', '--warnings-as-errors'],
+        group: 'build',
+        options: { "env": test_env },
+        problem_matcher: pm),
+      mix_task(
+        label: 'Clean',
+        args: 'clean',
+        group: 'build',
+        problem_matcher: pm),
+      mix_task(
+        label: 'Clobber',
+        args: do_args('clean', 'deps.clean', '-all'),
+        group: 'build',
+        problem_matcher: pm),
+      mix_task(
+        label: 'Dialyzer',
+        args: ["dialyzer", "--list-unused-filters"],
+        group: 'build',
+        options: { "env": test_env },
+        problem_matcher: pm),
+      mix_task(
+        label: 'Credo',
+        args: ['credo', '--strict'],
+        group: 'build',
+        options: { "env": test_env },
+        problem_matcher: pm)
+    ]
+  end
+
+  def do_args(*args)
+    ['do'] + args.map { |a| "#{a}," }
+  end
+
+  def umbrella_tasks
+    [
+      mix_task(
+        label: 'Unit test: ALL',
+        args: ['test'],
+        group: 'test'),
+      mix_task(
+        label: 'Unit test: ALL :focus',
+        args: ['test', '--only', 'focus:true'],
+        group: 'test'),
+      mix_task(
+        label: 'ExCoveralls',
+        args: ['coveralls.html', '--umbrella'],
+        group: 'test'),
+      mix_task(
+        label: 'Everything',
+        args: ['all_tests'],
+        group: 'test')
+    ]
+  end
+
+  def component_app_tasks
+    ComponentApp.list.flat_map do |app|
+      component_app_test(app)
+    end
+  end
+
+  def component_app_test(app)
+    [
+      mix_task(
+        label: "Unit test: #{app.name}",
+        args: ['test'],
+        group: 'test',
+        options: { cwd: app.directory }),
+      mix_task(
+        label: "Unit test: #{app.name} :focus",
+        args: ['test', '--only', 'focus:true'],
+        group: 'test',
+        options: { cwd: app.directory })
+    ]
+  end
+
+  def mix_task(label:, args:, group:, problem_matcher: [], options: {})
+    base = {
+      label: label,
+      type: 'shell',
+      command: 'mix',
+      args: Array(args),
+      group: group,
+      presentation: {
+        reveal: 'always',
+        panel: 'new'
+      },
+      problemMatcher: problem_matcher
+    }
+    base = merge_not_empty(base, :options, options)
+    base
+  end
+
+  def merge_not_empty(base, field, value)
+    if value.empty?
+      base
+    else
+      base.merge(field => value)
+    end
+  end
+
+  def test_env
+    { "MIX_ENV": 'test' }
+  end
+end
+
+TaskJSON.generate
